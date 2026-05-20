@@ -15,6 +15,18 @@
 </head>
 <body>
     
+    <!-- Dynamic Loading Screen Overlay -->
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-cyber-ring"></div>
+            <div class="loader-logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h3>AcademiaFlow</h3>
+            <p id="loader-status-text">Initializing Neural Interface...</p>
+        </div>
+    </div>
+
     <!-- Background Decorative Gradients -->
     <div class="bg-gradient bg-gradient-1"></div>
     <div class="bg-gradient bg-gradient-2"></div>
@@ -86,7 +98,7 @@
             <!-- Profile Widget -->
             <div class="profile-widget">
                 <div class="profile-avatar-container">
-                    <div class="profile-avatar" id="user-avatar-initials">JS</div>
+                    <img src="student_avatar.png" alt="Student Profile" class="profile-avatar-img" id="user-profile-img">
                     <div class="avatar-ring"></div>
                 </div>
                 <div class="profile-info">
@@ -161,7 +173,9 @@
                     </button>
 
                     <!-- Profile Circle for Mobile -->
-                    <div class="header-avatar" id="header-avatar-circle">ST</div>
+                    <div class="header-avatar" id="header-avatar-circle">
+                        <img src="student_avatar.png" alt="Profile Avatar" class="header-avatar-img" id="header-profile-img">
+                    </div>
                 </div>
             </header>
 
@@ -251,7 +265,14 @@
                                 </div>
                                 <div class="filter-dropdowns">
                                     <div class="select-wrapper">
-                                        <select id="priority-sort-select">
+                                        <select id="status-filter-select" title="Filter by Status">
+                                            <option value="pending" selected>Pending</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="all">All Tasks</option>
+                                        </select>
+                                    </div>
+                                    <div class="select-wrapper">
+                                        <select id="priority-sort-select" title="Filter by Priority">
                                             <option value="all">Any Priority</option>
                                             <option value="High">High</option>
                                             <option value="Medium">Medium</option>
@@ -259,7 +280,7 @@
                                         </select>
                                     </div>
                                     <div class="select-wrapper">
-                                        <select id="date-sort-select">
+                                        <select id="date-sort-select" title="Sort Order">
                                             <option value="soonest">Due: Soonest</option>
                                             <option value="latest">Due: Latest</option>
                                             <option value="priority-desc">Priority: High-Low</option>
@@ -288,14 +309,34 @@
                                 <button class="btn btn-white btn-sm" id="btn-next-tip">Next Tip</button>
                             </div>
 
-                            <!-- Deadlines Alert -->
-                            <div class="sidebar-card glass-panel">
-                                <div class="card-header">
-                                    <h3><i class="fa-regular fa-bell alert-bell"></i> Critical Deadlines</h3>
+                            <!-- Futuristic Calendar Widget -->
+                            <div class="sidebar-card glass-panel calendar-card">
+                                <div class="calendar-header">
+                                    <button class="calendar-nav-btn" id="prev-month-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <h3 id="calendar-month-year">May 2026</h3>
+                                    <button class="calendar-nav-btn" id="next-month-btn"><i class="fa-solid fa-chevron-right"></i></button>
                                 </div>
-                                <div class="critical-deadlines-list" id="critical-deadlines-list">
-                                    <!-- Critical deadlines render here dynamically -->
-                                    <div class="empty-mini-state">No immediate critical deadlines!</div>
+                                <div class="calendar-weekdays">
+                                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                                </div>
+                                <div class="calendar-days-grid" id="calendar-days-grid">
+                                    <!-- Days are rendered dynamically in JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Quick Reminders notepad Widget -->
+                            <div class="sidebar-card glass-panel reminders-card">
+                                <div class="card-header">
+                                    <h3><i class="fa-regular fa-bell alert-bell"></i> Quick Reminders</h3>
+                                </div>
+                                <div class="reminder-input-wrapper">
+                                    <input type="text" id="new-reminder-input" placeholder="e.g., Email professor...">
+                                    <button id="add-reminder-btn" class="icon-control-btn" title="Add Reminder">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="reminders-list" id="quick-reminders-list">
+                                    <!-- Reminders rendered dynamically in JavaScript -->
                                 </div>
                             </div>
                         </div>
@@ -392,7 +433,7 @@
                     <div class="insights-dashboard">
                         <!-- Stats Summary Cards -->
                         <div class="insights-row-cards">
-                            <div class="insights-card glass-panel">
+                            <div class="insights-card glass-panel animate-pulse-glow">
                                 <div class="insights-icon primary"><i class="fa-solid fa-fire-flame-curved"></i></div>
                                 <h4>Study Streak</h4>
                                 <h2 id="insights-streak">3 Days</h2>
@@ -533,6 +574,6 @@
     </div>
 
     <!-- MAIN JAVASCRIPT -->
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
