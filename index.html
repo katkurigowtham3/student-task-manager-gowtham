@@ -134,6 +134,12 @@
                             <span class="nav-label">Insights</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="settings">
+                            <i class="fa-solid fa-gear nav-icon"></i>
+                            <span class="nav-label">Settings</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
@@ -163,7 +169,26 @@
                     <!-- Search -->
                     <div class="header-search">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="global-search" placeholder="Search tasks, lectures...">
+                        <input type="text" id="global-search" placeholder="Search tasks, dates...">
+                    </div>
+
+                    <!-- Notification Container -->
+                    <div class="header-notification-wrapper">
+                        <button class="icon-control-btn notification-bell-btn" id="notification-btn" title="Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notification-badge" id="notification-badge-count">0</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div class="notification-dropdown glass-panel hidden" id="notification-dropdown">
+                            <div class="dropdown-header">
+                                <h3>Notifications</h3>
+                                <button class="clear-notifications-btn" id="clear-notifications-btn">Clear All</button>
+                            </div>
+                            <div class="notification-items-list" id="notification-items-list">
+                                <div class="empty-mini-state">No new notifications.</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Theme Toggle -->
@@ -302,11 +327,19 @@
 
                         <!-- Right Panel: Student Insights -->
                         <div class="dashboard-side-panel">
+                            <!-- Daily Inspiration Quote -->
+                            <div class="sidebar-card glass-panel quote-card bg-gradient-accent">
+                                <h3>Motivational Quote ✨</h3>
+                                <p id="motivational-quote">"The secret of getting ahead is getting started."</p>
+                                <span id="motivational-author">- Mark Twain</span>
+                                <button class="btn btn-white btn-sm" id="btn-next-quote" style="margin-top: 10px;">Next Quote</button>
+                            </div>
+
                             <!-- Quick Productivity Tip -->
-                            <div class="sidebar-card glass-panel bg-gradient-accent">
+                            <div class="sidebar-card glass-panel">
                                 <h3>Productivity Tip 💡</h3>
                                 <p id="productivity-tip">"Try the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break. Repeat 4 times and take a longer break!"</p>
-                                <button class="btn btn-white btn-sm" id="btn-next-tip">Next Tip</button>
+                                <button class="btn btn-secondary btn-sm" id="btn-next-tip" style="margin-top: 10px;">Next Tip</button>
                             </div>
 
                             <!-- Futuristic Calendar Widget -->
@@ -495,6 +528,74 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: SETTINGS -->
+                <section class="app-view" id="view-settings">
+                    <div class="section-header-row">
+                        <div>
+                            <h2>Settings & Personalization</h2>
+                            <p class="subtitle">Customize your identity and system configs.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-layout glass-panel">
+                        <form id="settings-form" class="settings-form">
+                            <div class="settings-profile-section">
+                                <div class="settings-avatar-wrapper">
+                                    <img src="student_avatar.png" alt="Profile" id="settings-profile-preview" class="settings-avatar-preview">
+                                    <div class="avatar-upload-overlay">
+                                        <i class="fa-solid fa-camera"></i>
+                                        <span class="upload-label">Upload Photo</span>
+                                        <input type="file" id="settings-avatar-input" accept="image/*">
+                                    </div>
+                                </div>
+                                <div class="settings-profile-info">
+                                    <h3 id="settings-name-display">John Student</h3>
+                                    <p id="settings-level-display">Freshman</p>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="settings-username">Student Username</label>
+                                    <div class="input-wrapper">
+                                        <i class="fa-regular fa-user input-icon"></i>
+                                        <input type="text" id="settings-username" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="settings-level">Year of Study</label>
+                                    <div class="input-wrapper">
+                                        <i class="fa-solid fa-book-open input-icon"></i>
+                                        <select id="settings-level">
+                                            <option value="Freshman">Freshman (1st Year)</option>
+                                            <option value="Sophomore">Sophomore (2nd Year)</option>
+                                            <option value="Junior">Junior (3rd Year)</option>
+                                            <option value="Senior">Senior (4th Year)</option>
+                                            <option value="Graduate">Graduate Student</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="settings-avatar-url">Custom Photo URL (Optional)</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-link input-icon"></i>
+                                    <input type="url" id="settings-avatar-url" placeholder="https://example.com/avatar.png">
+                                </div>
+                            </div>
+
+                            <div class="settings-actions">
+                                <button type="submit" class="btn btn-primary animated-btn">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    <span>Save Profile</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </section>
 

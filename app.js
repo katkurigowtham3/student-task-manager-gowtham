@@ -1,7 +1,7 @@
 // Student Task Manager Application Logic
 
 // ==========================================
-// 1. Initial Mock Data for First-Time Users
+// 1. Initial Mock Data & Settings Constants
 // ==========================================
 const INITIAL_TASKS = [
     {
@@ -53,6 +53,15 @@ const PRODUCTIVITY_TIPS = [
     "Combine difficult tasks with nice rewards. For example: study history while sipping your favorite tea."
 ];
 
+const MOTIVATIONAL_QUOTES = [
+    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+    { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+    { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+    { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+    { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+    { text: "The only limit to our realization of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" }
+];
+
 // Helper to get dates relative to today
 function getRelativeDate(daysOffset) {
     const d = new Date();
@@ -84,9 +93,10 @@ let state = {
     },
     
     currentTipIndex: 0,
+    currentQuoteIndex: 0,
     
-    // Dynamic Updates State
     reminders: [],
+    notifications: [],
     calendarDate: new Date()
 };
 
@@ -122,15 +132,26 @@ function loadLocalStorage() {
         state.reminders = JSON.parse(savedReminders);
     } else {
         state.reminders = [
-            { id: 'rem-mock-1', text: "Email Physics Prof about exam" },
+            { id: 'rem-mock-1', text: "Email Physics Prof about exam syllabus" },
             { id: 'rem-mock-2', text: "Buy textbook from college bookstore" }
         ];
         saveRemindersToStorage();
     }
+
+    // 5. Notifications
+    const savedNotifications = localStorage.getItem('academia_notifications');
+    if (savedNotifications) {
+        state.notifications = JSON.parse(savedNotifications);
+    } else {
+        state.notifications = [
+            { id: 'notif-mock-1', text: "Welcome to AcademiaFlow! Set up your goals now.", time: "10:00 AM", unread: true }
+        ];
+        saveNotificationsToStorage();
+    }
 }
 
-function saveUserSession(username, level) {
-    state.currentUser = { username, level };
+function saveUserSession(username, level, profilePic = null) {
+    state.currentUser = { username, level, profilePic };
     localStorage.setItem('academia_user', JSON.stringify(state.currentUser));
 }
 
@@ -149,6 +170,10 @@ function saveThemeToStorage() {
 
 function saveRemindersToStorage() {
     localStorage.setItem('academia_reminders', JSON.stringify(state.reminders));
+}
+
+function saveNotificationsToStorage() {
+    localStorage.setItem('academia_notifications', JSON.stringify(state.notifications));
 }
 
 // ==========================================
@@ -182,12 +207,21 @@ const DOM = {
     globalSearch: document.getElementById('global-search'),
     themeToggleBtn: document.getElementById('theme-toggle'),
     headerProfileImg: document.getElementById('header-profile-img'),
+    headerAvatarCircle: document.getElementById('header-avatar-circle'),
+    
+    // Notification elements
+    notificationBtn: document.getElementById('notification-btn'),
+    notificationBadgeCount: document.getElementById('notification-badge-count'),
+    notificationDropdown: document.getElementById('notification-dropdown'),
+    clearNotificationsBtn: document.getElementById('clear-notifications-btn'),
+    notificationItemsList: document.getElementById('notification-items-list'),
     
     // Views
     viewDashboard: document.getElementById('view-dashboard'),
     viewTasks: document.getElementById('view-tasks'),
     viewCompleted: document.getElementById('view-completed'),
     viewInsights: document.getElementById('view-insights'),
+    viewSettings: document.getElementById('view-settings'),
     
     // Dashboard Specific elements
     progressCircle: document.getElementById('progress-circle'),
@@ -202,6 +236,11 @@ const DOM = {
     productivityTipText: document.getElementById('productivity-tip'),
     btnNextTip: document.getElementById('btn-next-tip'),
     btnAddTaskDash: document.getElementById('btn-add-task-dash'),
+    
+    // Motivational Quotes elements
+    motivationalQuote: document.getElementById('motivational-quote'),
+    motivationalAuthor: document.getElementById('motivational-author'),
+    btnNextQuote: document.getElementById('btn-next-quote'),
     
     // Calendar DOM elements
     prevMonthBtn: document.getElementById('prev-month-btn'),
@@ -240,6 +279,16 @@ const DOM = {
     barProject: document.getElementById('bar-project'),
     barExam: document.getElementById('bar-exam'),
     barPersonal: document.getElementById('bar-personal'),
+    
+    // Settings View elements
+    settingsForm: document.getElementById('settings-form'),
+    settingsProfilePreview: document.getElementById('settings-profile-preview'),
+    settingsAvatarInput: document.getElementById('settings-avatar-input'),
+    settingsNameDisplay: document.getElementById('settings-name-display'),
+    settingsLevelDisplay: document.getElementById('settings-level-display'),
+    settingsUsername: document.getElementById('settings-username'),
+    settingsLevel: document.getElementById('settings-level'),
+    settingsAvatarUrl: document.getElementById('settings-avatar-url'),
     
     // Task Add/Edit Modal
     taskModal: document.getElementById('task-modal'),
@@ -293,6 +342,22 @@ function showToast(message, type = 'success') {
             }
         }, 300);
     }, 3200);
+}
+
+// Push system notification
+function pushNotification(text) {
+    const notif = {
+        id: 'notif-' + Date.now(),
+        text: text,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        unread: true
+    };
+    state.notifications.unshift(notif);
+    if (state.notifications.length > 20) {
+        state.notifications.pop();
+    }
+    saveNotificationsToStorage();
+    renderNotifications();
 }
 
 // Check Priority Color Hex or Tag Class
@@ -366,10 +431,10 @@ function switchView(viewName) {
     // 2. Manage View elements visibility
     const views = [
         { name: 'dashboard', el: DOM.viewDashboard },
-        { name: 'tasks', el: el => DOM.viewTasks }, // use deferred or directly
         { name: 'tasks', el: DOM.viewTasks },
         { name: 'completed', el: DOM.viewCompleted },
-        { name: 'insights', el: DOM.viewInsights }
+        { name: 'insights', el: DOM.viewInsights },
+        { name: 'settings', el: DOM.viewSettings }
     ];
     
     views.forEach(v => {
@@ -396,10 +461,13 @@ function switchView(viewName) {
         setTimeout(() => {
             renderBoardTasks();
         }, 350);
-    } else if (viewName === 'completed') {
+    } else if (viewName === 'settings') {
+        initSettingsFields();
         renderApp();
-    } else if (viewName === 'insights') {
-        renderInsightsGraph();
+    } else {
+        if (viewName === 'insights') {
+            renderInsightsGraph();
+        }
         renderApp();
     }
 }
@@ -438,6 +506,7 @@ function handleTaskFormSubmit(e) {
                 priority,
                 dueDate
             };
+            pushNotification(`Updated assignment task: "${title}"`);
             showToast("Task updated successfully!");
         }
     } else {
@@ -452,6 +521,7 @@ function handleTaskFormSubmit(e) {
             completed: false
         };
         state.tasks.push(newTask);
+        pushNotification(`Added new task checklist: "${title}"`);
         showToast("Task created successfully!");
     }
     
@@ -498,9 +568,11 @@ function toggleTaskCompletion(taskId) {
     
     if (task.completed) {
         task.dateCompleted = new Date().toISOString().split('T')[0];
+        pushNotification(`Task Completed! Good job on finishing: "${task.title}"`);
         showToast(`"${task.title}" marked as completed! 🎉`, 'success');
     } else {
         delete task.dateCompleted;
+        pushNotification(`Task Restored: "${task.title}"`);
         showToast(`"${task.title}" moved back to pending.`, 'info');
     }
     
@@ -526,6 +598,7 @@ function toggleTaskCompletion(taskId) {
 }
 
 function deleteTask(taskId) {
+    const task = state.tasks.find(t => t.id === taskId);
     const cardElement = document.querySelector(`[data-task-id="${taskId}"]`);
     if (cardElement) {
         cardElement.classList.add('task-exit-animate');
@@ -534,6 +607,9 @@ function deleteTask(taskId) {
     setTimeout(() => {
         state.tasks = state.tasks.filter(t => t.id !== taskId);
         saveTasksToStorage();
+        if (task) {
+            pushNotification(`Deleted task: "${task.title}"`);
+        }
         showToast("Task removed.", 'danger');
         renderApp();
         renderCalendar();
@@ -552,6 +628,7 @@ function clearCompletedTasks() {
     
     state.tasks = state.tasks.filter(t => !t.completed);
     saveTasksToStorage();
+    pushNotification(`Cleared ${totalCompleted} completed tasks from history.`);
     showToast(`Archived ${totalCompleted} completed tasks cleared!`, 'danger');
     renderApp();
     renderCalendar();
@@ -560,6 +637,12 @@ function clearCompletedTasks() {
 function loadNextTip() {
     state.currentTipIndex = (state.currentTipIndex + 1) % PRODUCTIVITY_TIPS.length;
     DOM.productivityTipText.textContent = `"${PRODUCTIVITY_TIPS[state.currentTipIndex]}"`;
+}
+
+function loadNextQuote() {
+    state.currentQuoteIndex = (state.currentQuoteIndex + 1) % MOTIVATIONAL_QUOTES.length;
+    DOM.motivationalQuote.textContent = `"${MOTIVATIONAL_QUOTES[state.currentQuoteIndex].text}"`;
+    DOM.motivationalAuthor.textContent = `- ${MOTIVATIONAL_QUOTES[state.currentQuoteIndex].author}`;
 }
 
 // ==========================================
@@ -578,6 +661,7 @@ function addReminder() {
     saveRemindersToStorage();
     DOM.newReminderInput.value = '';
     renderReminders();
+    pushNotification(`Reminder added: "${text}"`);
     showToast("Reminder added!", "success");
 }
 
@@ -634,7 +718,6 @@ function renderCalendar() {
     const today = new Date();
     const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
     
-    // Detect active tasks due dates
     const taskDates = new Set();
     state.tasks.forEach(t => {
         if (!t.completed && t.dueDate) {
@@ -667,7 +750,6 @@ function renderCalendar() {
             dayEl.title = "Task(s) due today";
         }
         
-        // Filter by date on click
         dayEl.addEventListener('click', () => {
             const formattedMonth = String(month + 1).padStart(2, '0');
             const formattedDay = String(day).padStart(2, '0');
@@ -679,6 +761,98 @@ function renderCalendar() {
         });
         
         daysGrid.appendChild(dayEl);
+    }
+}
+
+// ==========================================
+// 6.7 Notification Logic
+// ==========================================
+function renderNotifications() {
+    const list = DOM.notificationItemsList;
+    const badge = DOM.notificationBadgeCount;
+    if (!list) return;
+    
+    list.innerHTML = '';
+    
+    const unreadCount = state.notifications.filter(n => n.unread).length;
+    if (unreadCount > 0 && badge) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'flex';
+    } else if (badge) {
+        badge.style.display = 'none';
+    }
+    
+    if (state.notifications.length === 0) {
+        list.innerHTML = `<div class="empty-mini-state">No notifications.</div>`;
+        return;
+    }
+    
+    state.notifications.forEach(n => {
+        const item = document.createElement('div');
+        item.className = `notification-item ${n.unread ? 'unread' : ''}`;
+        item.innerHTML = `
+            <span class="notif-text">${escapeHTML(n.text)}</span>
+            <span class="notif-time">${n.time}</span>
+        `;
+        
+        // Mark read on click
+        item.addEventListener('click', () => {
+            n.unread = false;
+            saveNotificationsToStorage();
+            renderNotifications();
+        });
+        
+        list.appendChild(item);
+    });
+}
+
+function clearNotifications() {
+    state.notifications = [];
+    saveNotificationsToStorage();
+    renderNotifications();
+    showToast("Notifications cleared.", "info");
+}
+
+// ==========================================
+// 6.8 Settings Logic
+// ==========================================
+function initSettingsFields() {
+    if (state.currentUser) {
+        DOM.settingsUsername.value = state.currentUser.username;
+        DOM.settingsLevel.value = state.currentUser.level;
+        DOM.settingsNameDisplay.textContent = state.currentUser.username;
+        DOM.settingsLevelDisplay.textContent = state.currentUser.level;
+        
+        const avatarSrc = state.currentUser.profilePic || './student_avatar.png';
+        DOM.settingsProfilePreview.src = avatarSrc;
+        DOM.settingsAvatarUrl.value = (state.currentUser.profilePic && state.currentUser.profilePic.startsWith('http')) ? state.currentUser.profilePic : '';
+    }
+}
+
+function handleSettingsSubmit(e) {
+    e.preventDefault();
+    const newName = DOM.settingsUsername.value.trim();
+    const newLevel = DOM.settingsLevel.value;
+    const customUrl = DOM.settingsAvatarUrl.value.trim();
+    
+    if (newName) {
+        let avatarPic = state.currentUser.profilePic;
+        if (customUrl) {
+            avatarPic = customUrl;
+        }
+        
+        saveUserSession(newName, newLevel, avatarPic);
+        pushNotification("Profile settings updated successfully!");
+        showToast("Profile settings saved!", "success");
+        
+        renderApp();
+        
+        // Update setting displays
+        DOM.settingsNameDisplay.textContent = newName;
+        DOM.settingsLevelDisplay.textContent = newLevel;
+        if (avatarPic) {
+            DOM.settingsProfilePreview.src = avatarPic;
+        }
     }
 }
 
@@ -698,10 +872,15 @@ function renderApp() {
     
     const name = state.currentUser.username;
     const level = state.currentUser.level;
+    const avatarPic = state.currentUser.profilePic || './student_avatar.png';
     
     DOM.userDisplayName.textContent = name;
     DOM.userDisplayLevel.textContent = level;
     DOM.headerUsername.textContent = name;
+    
+    // Sync profile pictures across UI elements
+    DOM.userProfileImg.src = avatarPic;
+    DOM.headerProfileImg.src = avatarPic;
     
     // Calculate global stats counts
     const pendingTasks = state.tasks.filter(t => !t.completed);
@@ -736,7 +915,7 @@ function renderApp() {
         DOM.dashboardProgressDesc.textContent = "Keep studying! Complete tasks to build momentum.";
     }
     
-    // Render views
+    // Render view structures
     if (state.activeView === 'dashboard') {
         renderDashboardTasks();
         renderReminders();
@@ -752,7 +931,7 @@ function renderDashboardTasks() {
     
     listContainer.innerHTML = '';
     
-    const statusVal = DOM.statusFilterSelect.value; // pending, completed, all
+    const statusVal = DOM.statusFilterSelect.value;
     const catFilter = state.dashboardFilters.category;
     const priorityFilter = state.dashboardFilters.priority;
     const sortBy = state.dashboardFilters.sortBy;
@@ -773,7 +952,7 @@ function renderDashboardTasks() {
         if (searchVal) {
             const matchesSearch = task.title.toLowerCase().includes(searchVal) || 
                                   task.desc.toLowerCase().includes(searchVal) ||
-                                  task.dueDate.includes(searchVal); // Allow date search!
+                                  task.dueDate.includes(searchVal);
             if (!matchesSearch) return false;
         }
         
@@ -1041,6 +1220,7 @@ function escapeHTML(str) {
 // ==========================================
 
 function initEventListeners() {
+    // Auth Form Login
     DOM.loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = DOM.usernameInput.value.trim();
@@ -1048,7 +1228,11 @@ function initEventListeners() {
         
         if (username) {
             saveUserSession(username, studyLevel);
+            pushNotification(`Logged in successfully as ${username}`);
             showToast(`Welcome back, ${username}! Let's make today productive.`, 'success');
+            
+            // Sync settings inputs instantly
+            initSettingsFields();
             switchView('dashboard');
         }
     });
@@ -1115,6 +1299,7 @@ function initEventListeners() {
     DOM.btnClearCompleted.addEventListener('click', clearCompletedTasks);
     
     DOM.btnNextTip.addEventListener('click', loadNextTip);
+    DOM.btnNextQuote.addEventListener('click', loadNextQuote);
     
     // Calendar Navigation
     DOM.prevMonthBtn.addEventListener('click', () => {
@@ -1132,6 +1317,36 @@ function initEventListeners() {
         if (e.key === 'Enter') addReminder();
     });
     
+    // Notification Toggle & Actions
+    DOM.notificationBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        DOM.notificationDropdown.classList.toggle('hidden');
+    });
+    DOM.clearNotificationsBtn.addEventListener('click', clearNotifications);
+    document.addEventListener('click', (e) => {
+        if (!DOM.notificationDropdown.contains(e.target) && e.target !== DOM.notificationBtn) {
+            DOM.notificationDropdown.classList.add('hidden');
+        }
+    });
+    
+    // Settings profile picture local file upload loading
+    DOM.settingsAvatarInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const dataUrl = event.target.result;
+                state.currentUser.profilePic = dataUrl;
+                DOM.settingsProfilePreview.src = dataUrl;
+                showToast("Avatar image loaded! Save profile settings to apply.", "info");
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Settings Submit Form Save
+    DOM.settingsForm.addEventListener('submit', handleSettingsSubmit);
+    
     DOM.mobileMenuBtn.addEventListener('click', () => {
         DOM.sidebar.classList.add('mobile-open');
     });
@@ -1140,7 +1355,7 @@ function initEventListeners() {
     });
 }
 
-// Window Globals
+// Window Globals for dynamic onclick mappings
 window.toggleTaskCompletion = toggleTaskCompletion;
 window.deleteTask = deleteTask;
 window.openTaskModal = openTaskModal;
@@ -1180,9 +1395,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1100);
     
     if (state.currentUser) {
+        initSettingsFields();
         switchView('dashboard');
         renderCalendar();
         renderReminders();
+        renderNotifications();
     } else {
         renderApp();
     }

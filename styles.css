@@ -2241,3 +2241,260 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/* ==========================================
+   Additional Futuristic UI Upgrades
+   ========================================== */
+
+/* 1. Header Notification Container */
+.header-notification-wrapper {
+    position: relative;
+}
+
+.notification-bell-btn {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: var(--danger-color);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--card-bg);
+}
+
+/* 2. Notification Dropdown */
+.notification-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 320px;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    padding: 16px !important;
+    animation: slideInDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    border: 1.5px solid var(--input-border) !important;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--input-border);
+}
+
+.dropdown-header h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.clear-notifications-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.clear-notifications-btn:hover {
+    opacity: 0.8;
+}
+
+.notification-items-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    padding-right: 2px;
+}
+
+.notification-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    font-size: 0.75rem;
+    position: relative;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.notification-item.unread {
+    border-color: rgba(114, 54, 253, 0.3);
+    background-color: var(--primary-light);
+}
+
+.notification-item .notif-text {
+    color: var(--text-main);
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+
+.notification-item .notif-time {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+}
+
+/* 3. Motivational Quotes Card */
+.quote-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.quote-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.quote-card p {
+    font-style: italic;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.quote-card span {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-align: right;
+    display: block;
+}
+
+.quote-card .btn-white {
+    background-color: #fff;
+    color: var(--primary-color);
+    border: none;
+}
+
+.quote-card .btn-white:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+}
+
+/* 4. Settings Layout styling */
+.settings-layout {
+    padding: 30px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-profile-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--input-border);
+    margin-bottom: 10px;
+}
+
+.settings-avatar-wrapper {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.settings-avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.avatar-upload-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    color: #fff;
+    font-size: 0.7rem;
+    gap: 4px;
+}
+
+.avatar-upload-overlay i {
+    font-size: 1.2rem;
+}
+
+.settings-avatar-wrapper:hover .avatar-upload-overlay {
+    opacity: 1;
+}
+
+.settings-avatar-wrapper:hover .settings-avatar-preview {
+    transform: scale(1.05);
+}
+
+.settings-avatar-wrapper input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.settings-profile-info h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.settings-profile-info p {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+/* 5. Mobile header profile alignment */
+.header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2.5px solid var(--primary-color);
+}
+.header-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
