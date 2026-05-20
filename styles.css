@@ -99,13 +99,29 @@
     box-sizing: border-box;
 }
 
+body, 
+.glass-panel,
+.sidebar-wrapper,
+.header-wrapper,
+.icon-control-btn,
+.task-card,
+.board-task-card,
+.stat-item,
+.modal-card,
+input, select, textarea,
+h1, h2, h3, h4, h5, p, span, i {
+    transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 body {
     font-family: var(--font-body);
     background-color: var(--bg-color);
     color: var(--text-main);
     overflow-x: hidden;
     min-height: 100vh;
-    transition: var(--theme-transition);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -676,6 +692,14 @@ h1, h2, h3, h4, h5, h6 {
     border-color: var(--primary-color);
     color: var(--primary-color);
     transform: scale(1.08);
+}
+
+.theme-toggle-btn i {
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-toggle-btn:hover i {
+    transform: rotate(30deg) scale(1.15);
 }
 
 /* Theme Toggle Button Icon Display Switching */
@@ -1346,6 +1370,16 @@ h1, h2, h3, h4, h5, h6 {
     gap: 14px;
     position: relative;
     border-top: 4px solid var(--badge-color, var(--primary-color));
+    transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.board-task-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(114, 54, 253, 0.08);
 }
 
 .board-task-header {
