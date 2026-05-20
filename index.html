@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Task Manager - Elevate Your Productivity</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <!-- Background Decorative Gradients -->
+    <div class="bg-gradient bg-gradient-1"></div>
+    <div class="bg-gradient bg-gradient-2"></div>
+    <div class="bg-gradient bg-gradient-3"></div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="auth-container">
+        <div class="auth-card glass-panel">
+            <div class="auth-logo">
+                <div class="logo-icon animate-pulse-glow">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h2>AcademiaFlow</h2>
+                <p>Your Ultimate Student Planner</p>
+            </div>
+            
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Student Username</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user input-icon"></i>
+                        <input type="text" id="username" placeholder="e.g., Alex Mercer" required autocomplete="off">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="student-level">Year of Study</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-book-open input-icon"></i>
+                        <select id="student-level">
+                            <option value="Freshman">Freshman (1st Year)</option>
+                            <option value="Sophomore">Sophomore (2nd Year)</option>
+                            <option value="Junior">Junior (3rd Year)</option>
+                            <option value="Senior">Senior (4th Year)</option>
+                            <option value="Graduate">Graduate Student</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full animated-btn">
+                    <span>Enter Dashboard</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Organize assignments, track exams, and conquer deadlines.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP CONTAINER (DASHBOARD) -->
+    <div id="app-container" class="app-layout hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar-wrapper glass-panel" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <span class="brand-name">AcademiaFlow</span>
+                <button class="mobile-close-btn" id="mobile-close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Profile Widget -->
+            <div class="profile-widget">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar" id="user-avatar-initials">JS</div>
+                    <div class="avatar-ring"></div>
+                </div>
+                <div class="profile-info">
+                    <h4 class="profile-name" id="user-display-name">John Student</h4>
+                    <span class="profile-status" id="user-display-level">Freshman</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-view="dashboard">
+                            <i class="fa-solid fa-chart-pie nav-icon"></i>
+                            <span class="nav-label">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="tasks">
+                            <i class="fa-solid fa-list-check nav-icon"></i>
+                            <span class="nav-label">My Tasks</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="completed">
+                            <i class="fa-solid fa-circle-check nav-icon"></i>
+                            <span class="nav-label">Completed</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="insights">
+                            <i class="fa-solid fa-brain nav-icon"></i>
+                            <span class="nav-label">Insights</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-full logout-btn" id="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-panel">
+            <!-- Header -->
+            <header class="header-wrapper glass-panel">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobile-menu-btn">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    <div class="header-greeting">
+                        <h1 class="welcome-title">Welcome back, <span id="header-username">Student</span>! 👋</h1>
+                        <p class="current-date" id="current-date">Wednesday, May 20, 2026</p>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Search -->
+                    <div class="header-search">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="global-search" placeholder="Search tasks, lectures...">
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button class="icon-control-btn theme-toggle-btn" id="theme-toggle" title="Toggle Theme">
+                        <i class="fa-solid fa-moon moon-icon"></i>
+                        <i class="fa-solid fa-sun sun-icon"></i>
+                    </button>
+
+                    <!-- Profile Circle for Mobile -->
+                    <div class="header-avatar" id="header-avatar-circle">ST</div>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="view-content" id="view-container">
+                
+                <!-- VIEW 1: DASHBOARD (Default) -->
+                <section class="app-view active-view" id="view-dashboard">
+                    <!-- Top Metrics Grid -->
+                    <div class="metrics-grid">
+                        <!-- Progress Card -->
+                        <div class="metric-card progress-card glass-panel">
+                            <div class="card-radial-progress">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-circle-bg" stroke="rgba(255, 255, 255, 0.08)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                    <circle class="progress-ring-circle" id="progress-circle" stroke="var(--primary-color)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                </svg>
+                                <div class="progress-text">
+                                    <span class="progress-percent" id="dashboard-progress-pct">0%</span>
+                                    <span class="progress-sub">Done</span>
+                                </div>
+                            </div>
+                            <div class="progress-meta">
+                                <h3>Term Productivity</h3>
+                                <p id="dashboard-progress-desc">Keep studying! Complete tasks to pump up your score.</p>
+                                <div class="progress-ratio" id="dashboard-progress-ratio">0 / 0 Tasks</div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Stats -->
+                        <div class="metric-stats-grid">
+                            <div class="metric-card stat-item glass-panel card-pending">
+                                <div class="stat-icon">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">Pending Tasks</span>
+                                    <h2 class="stat-value" id="stat-pending">0</h2>
+                                </div>
+                            </div>
+
+                            <div class="metric-card stat-item glass-panel card-completed">
+                                <div class="stat-icon">
+                                    <i class="fa-regular fa-circle-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">Completed</span>
+                                    <h2 class="stat-value" id="stat-completed">0</h2>
+                                </div>
+                            </div>
+
+                            <div class="metric-card stat-item glass-panel card-high-priority">
+                                <div class="stat-icon">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">High Priority</span>
+                                    <h2 class="stat-value" id="stat-high">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task Manager Section -->
+                    <div class="dashboard-main-grid">
+                        <!-- Tasks Column -->
+                        <div class="dashboard-tasks-container glass-panel">
+                            <div class="section-header">
+                                <div class="section-title-group">
+                                    <h2>Upcoming Tasks</h2>
+                                    <span class="badge badge-accent" id="upcoming-task-count">0 Remaining</span>
+                                </div>
+                                <button class="btn btn-primary animated-btn btn-sm" id="btn-add-task-dash">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>New Task</span>
+                                </button>
+                            </div>
+
+                            <!-- Filter & Search Bar -->
+                            <div class="task-filters-bar">
+                                <div class="filter-pills" id="category-filter-pills">
+                                    <button class="pill active" data-category="all">All</button>
+                                    <button class="pill" data-category="Study">Study</button>
+                                    <button class="pill" data-category="Project">Project</button>
+                                    <button class="pill" data-category="Exam">Exam</button>
+                                    <button class="pill" data-category="Personal">Personal</button>
+                                </div>
+                                <div class="filter-dropdowns">
+                                    <div class="select-wrapper">
+                                        <select id="priority-sort-select">
+                                            <option value="all">Any Priority</option>
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </div>
+                                    <div class="select-wrapper">
+                                        <select id="date-sort-select">
+                                            <option value="soonest">Due: Soonest</option>
+                                            <option value="latest">Due: Latest</option>
+                                            <option value="priority-desc">Priority: High-Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tasks List -->
+                            <div class="tasks-scroll-list" id="active-tasks-list">
+                                <!-- Tasks render here dynamically -->
+                                <div class="empty-state">
+                                    <div class="empty-icon"><i class="fa-solid fa-circle-check"></i></div>
+                                    <h3>Hooray! No pending tasks</h3>
+                                    <p>Sit back, relax or load up some study goals!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Student Insights -->
+                        <div class="dashboard-side-panel">
+                            <!-- Quick Productivity Tip -->
+                            <div class="sidebar-card glass-panel bg-gradient-accent">
+                                <h3>Productivity Tip 💡</h3>
+                                <p id="productivity-tip">"Try the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break. Repeat 4 times and take a longer break!"</p>
+                                <button class="btn btn-white btn-sm" id="btn-next-tip">Next Tip</button>
+                            </div>
+
+                            <!-- Deadlines Alert -->
+                            <div class="sidebar-card glass-panel">
+                                <div class="card-header">
+                                    <h3><i class="fa-regular fa-bell alert-bell"></i> Critical Deadlines</h3>
+                                </div>
+                                <div class="critical-deadlines-list" id="critical-deadlines-list">
+                                    <!-- Critical deadlines render here dynamically -->
+                                    <div class="empty-mini-state">No immediate critical deadlines!</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: ALL TASKS (Full List with Editing/Adding) -->
+                <section class="app-view" id="view-tasks">
+                    <div class="section-header-row">
+                        <div>
+                            <h2>All Homework & Task Board</h2>
+                            <p class="subtitle">Complete control over your academic schedule.</p>
+                        </div>
+                        <button class="btn btn-primary animated-btn" id="btn-add-task-board">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Create New Task</span>
+                        </button>
+                    </div>
+
+                    <div class="board-layout glass-panel">
+                        <!-- Filters panel -->
+                        <div class="board-filters">
+                            <div class="search-input-group">
+                                <input type="text" id="board-search" placeholder="Filter by title or course...">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <div class="filter-controls-group">
+                                <div class="control-box">
+                                    <label>Course / Category</label>
+                                    <select id="board-filter-category">
+                                        <option value="all">All Categories</option>
+                                        <option value="Study">Study</option>
+                                        <option value="Project">Project</option>
+                                        <option value="Exam">Exam</option>
+                                        <option value="Personal">Personal</option>
+                                    </select>
+                                </div>
+                                <div class="control-box">
+                                    <label>Priority</label>
+                                    <select id="board-filter-priority">
+                                        <option value="all">All Priorities</option>
+                                        <option value="High">High Only</option>
+                                        <option value="Medium">Medium Only</option>
+                                        <option value="Low">Low Only</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scrollable Board list -->
+                        <div class="board-tasks-grid" id="board-tasks-list">
+                            <!-- Tasks listed here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: COMPLETED TASKS -->
+                <section class="app-view" id="view-completed">
+                    <div class="section-header-row">
+                        <div>
+                            <h2>Archive of Achievements</h2>
+                            <p class="subtitle">Look at all the milestones you have crushed!</p>
+                        </div>
+                        <button class="btn btn-danger animated-btn" id="btn-clear-completed">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Clear Archive</span>
+                        </button>
+                    </div>
+
+                    <div class="board-layout glass-panel">
+                        <div class="completed-summary-bar">
+                            <div class="completed-icon-large"><i class="fa-solid fa-trophy"></i></div>
+                            <div class="completed-stats-words">
+                                <h3>Total Accomplished: <span id="completed-count-badge">0</span> tasks</h3>
+                                <p>Consistency creates momentum. Build your streak today!</p>
+                            </div>
+                        </div>
+
+                        <div class="completed-list" id="completed-tasks-list">
+                            <!-- Completed items render here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: INSIGHTS & ANALYTICS -->
+                <section class="app-view" id="view-insights">
+                    <div class="section-header-row">
+                        <div>
+                            <h2>Academic Insights & Analytics</h2>
+                            <p class="subtitle">Understand your study habits and output efficiency.</p>
+                        </div>
+                    </div>
+
+                    <div class="insights-dashboard">
+                        <!-- Stats Summary Cards -->
+                        <div class="insights-row-cards">
+                            <div class="insights-card glass-panel">
+                                <div class="insights-icon primary"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                                <h4>Study Streak</h4>
+                                <h2 id="insights-streak">3 Days</h2>
+                                <p>Keep completing tasks daily!</p>
+                            </div>
+                            <div class="insights-card glass-panel">
+                                <div class="insights-icon success"><i class="fa-solid fa-bolt"></i></div>
+                                <h4>Tasks Velocity</h4>
+                                <h2 id="insights-velocity">0 / day</h2>
+                                <p>Average task resolution rate.</p>
+                            </div>
+                            <div class="insights-card glass-panel">
+                                <div class="insights-icon accent"><i class="fa-solid fa-bullseye"></i></div>
+                                <h4>High Priority Completion</h4>
+                                <h2 id="insights-high-pct">0%</h2>
+                                <p>Resolution rate of vital tasks.</p>
+                            </div>
+                        </div>
+
+                        <!-- Productivity Graph Visualizer -->
+                        <div class="insights-main-card glass-panel">
+                            <h3>Category Distribution</h3>
+                            <p class="chart-desc">Relative density of tasks assigned per discipline</p>
+                            <div class="chart-container">
+                                <div class="bar-chart-visualizer" id="category-bar-chart">
+                                    <!-- Dynamic bars representing task ratios -->
+                                    <div class="bar-item">
+                                        <div class="bar-fill-wrapper">
+                                            <div class="bar-fill primary" id="bar-study" style="height: 0%">
+                                                <span class="bar-val">0</span>
+                                            </div>
+                                        </div>
+                                        <span class="bar-label"><i class="fa-solid fa-graduation-cap"></i> Study</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar-fill-wrapper">
+                                            <div class="bar-fill info" id="bar-project" style="height: 0%">
+                                                <span class="bar-val">0</span>
+                                            </div>
+                                        </div>
+                                        <span class="bar-label"><i class="fa-solid fa-diagram-project"></i> Project</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar-fill-wrapper">
+                                            <div class="bar-fill warning" id="bar-exam" style="height: 0%">
+                                                <span class="bar-val">0</span>
+                                            </div>
+                                        </div>
+                                        <span class="bar-label"><i class="fa-solid fa-file-invoice"></i> Exam</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar-fill-wrapper">
+                                            <div class="bar-fill success" id="bar-personal" style="height: 0%">
+                                                <span class="bar-val">0</span>
+                                            </div>
+                                        </div>
+                                        <span class="bar-label"><i class="fa-solid fa-mug-hot"></i> Personal</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- TASK DIALOG / MODAL (ADD & EDIT) -->
+    <div id="task-modal" class="modal-overlay hidden">
+        <div class="modal-card glass-panel animate-zoom-in">
+            <div class="modal-header">
+                <h3 id="modal-title">Create New Study Task</h3>
+                <button class="modal-close" id="modal-close-btn-x">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="task-form">
+                <input type="hidden" id="task-edit-id">
+                
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-heading input-icon"></i>
+                        <input type="text" id="task-title" placeholder="e.g., Read Physics Chapter 4" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="task-desc">Short Description</label>
+                    <textarea id="task-desc" rows="3" placeholder="Summarize what needs to be done..." required></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="task-category">Category</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-tag input-icon"></i>
+                            <select id="task-category">
+                                <option value="Study">📚 Study / Homework</option>
+                                <option value="Project">💻 Project Assignment</option>
+                                <option value="Exam">📝 Exam Revision</option>
+                                <option value="Personal">🏠 Personal / Hobby</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="task-priority">Priority</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-triangle-exclamation input-icon"></i>
+                            <select id="task-priority">
+                                <option value="Low">🟢 Low Priority</option>
+                                <option value="Medium" selected>🟡 Medium Priority</option>
+                                <option value="High">🔴 High Priority</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="task-date">Due Date</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-calendar-days input-icon"></i>
+                        <input type="date" id="task-date" required>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary animated-btn" id="modal-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary animated-btn" id="modal-submit-btn">
+                        <span>Save Task</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script src="app.js"></script>
+</body>
+</html>
